@@ -20,31 +20,22 @@ public class ComplaintEscalationJob {
     @Autowired
     private UserRepository userRepository;
 
-    // Runs once every day at midnight
+    // Runs every day at midnight
     @Scheduled(cron = "0 0 0 * * ?")
     public void escalateUnresolvedComplaints() {
-
-        List<Complaint> complaints =
-                complaintRepository.findByStatus("ASSIGNED");
+        // Find all complaints currently assigned
+        List<Complaint> complaints = complaintRepository.findByStatus("ASSIGNED");
 
         for (Complaint c : complaints) {
-
             if (c.getAssignedAt() == null) continue;
 
-            if (c.getAssignedAt()
-                    .isBefore(LocalDateTime.now().minusDays(7))) {
-
-                User currentEmployee = c.getEmployee();
-                if (currentEmployee == null) continue;
-
-                // move to superior
+            // If more than 7 days have passed since assignment
+            if (c.getAssignedAt().isBefore(LocalDateTime.now().minusDays(7))) {
                 User superior = userRepository.findFirstByRole("MANAGER");
-
-
                 if (superior != null) {
                     c.setEmployee(superior);
                     c.setStatus("ESCALATED");
-                    c.setAssignedAt(LocalDateTime.now());
+                    c.setUpdatedAt(LocalDateTime.now());
                     complaintRepository.save(c);
                 }
             }

@@ -1,13 +1,15 @@
 package com.example.resolve1.controller;
+
 import com.example.resolve1.entity.Complaint;
 import com.example.resolve1.entity.EmployeeRequest;
 import com.example.resolve1.entity.User;
-import com.example.resolve1.entity.Notification; // You'll need this entity
+import com.example.resolve1.entity.Notification;
 import com.example.resolve1.repository.ComplaintRepository;
 import com.example.resolve1.repository.EmployeeRequestRepository;
 import com.example.resolve1.repository.UserRepository;
-import com.example.resolve1.repository.NotificationRepository; // You'll need this repo
+import com.example.resolve1.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -30,7 +32,6 @@ public class AdminController {
     @Autowired
     private NotificationRepository notificationRepository;
 
-    // Helper method to send notifications
     private void sendNotification(User user, String message) {
         Notification notification = new Notification();
         notification.setUser(user);
@@ -45,9 +46,9 @@ public class AdminController {
         return complaintRepository.findAll();
     }
 
-    @GetMapping("/complaints/assigned/{employeeId}")
-    public List<Complaint> getAssignedComplaints(@PathVariable Long employeeId) {
-        return complaintRepository.findByEmployeeId(employeeId);
+    @GetMapping("/employees")
+    public List<User> getAllEmployees() {
+        return userRepository.findAllByRoleIn(List.of("EMPLOYEE", "MANAGER", "SENIOR_MANAGER"));
     }
 
     @PutMapping("/complaints/{id}/status")
@@ -60,38 +61,36 @@ public class AdminController {
         c.setUpdatedAt(LocalDateTime.now());
         Complaint savedComplaint = complaintRepository.save(c);
 
-        // NOTIFICATION: Notify the Citizen when the status changes to RESOLVED
         if ("RESOLVED".equalsIgnoreCase(data.getStatus())) {
             sendNotification(c.getUser(), "Your complaint '" + c.getTitle() + "' has been resolved!");
-        }
-        // NOTIFICATION: Notify the Citizen if the issue is ESCALATED
-        else if ("ESCALATED".equalsIgnoreCase(data.getStatus())) {
-            sendNotification(c.getUser(), "Your complaint '" + c.getTitle() + "' has been escalated to a senior manager.");
+        } else if ("ESCALATED".equalsIgnoreCase(data.getStatus())) {
+            sendNotification(c.getUser(), "Your complaint '" + c.getTitle() + "' has been escalated.");
         }
 
         return savedComplaint;
     }
 
-    @GetMapping("/employees")
-    public List<User> getAllEmployees() {
-        return userRepository.findAllByRoleIn(List.of("EMPLOYEE", "MANAGER", "SENIOR_MANAGER"));
-    }
-
     @PostMapping("/complaints/{complaintId}/assign/{employeeId}")
-    public Complaint assignComplaint(@PathVariable Long complaintId, @PathVariable Long employeeId) {
+    public ResponseEntity<?> assignComplaint(@PathVariable Long complaintId, @PathVariable Long employeeId) {
         Complaint complaint = complaintRepository.findById(complaintId).orElse(null);
         User employee = userRepository.findById(employeeId).orElse(null);
 
-        if (complaint == null || employee == null) return null;
+        if (complaint == null || employee == null) {
+            return ResponseEntity.badRequest().body("Not found");
+        }
 
         complaint.setEmployee(employee);
-        complaint.setStatus("ASSIGNED");
+        complaint.setAssignedAt(LocalDateTime.now());
         complaint.setUpdatedAt(LocalDateTime.now());
 
-        // NOTIFICATION: Notify the Employee they have a new task
-        sendNotification(employee, "A new task has been assigned to you: " + complaint.getTitle());
+        if (!"ESCALATED".equalsIgnoreCase(complaint.getStatus())) {
+            complaint.setStatus("ASSIGNED");
+        }
 
-        return complaintRepository.save(complaint);
+        Complaint saved = complaintRepository.save(complaint);
+        sendNotification(employee, "Task assigned: " + complaint.getTitle());
+
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/role-requests")
@@ -103,30 +102,11 @@ public class AdminController {
     public String approveRole(@PathVariable Long id) {
         EmployeeRequest req = employeeRequestRepository.findById(id).orElse(null);
         if (req == null) return "Not found";
-
         User user = req.getUser();
         user.setRole("EMPLOYEE");
         userRepository.save(user);
-
         req.setStatus("APPROVED");
         employeeRequestRepository.save(req);
-
-        // NOTIFICATION: Notify the User their role is approved
-        sendNotification(user, "Your request to join as an Employee has been approved! Welcome aboard.");
-
         return "Approved";
     }
-}
-
-class StatusUpdateDTO {
-    private String status;
-    private String note;
-    private Long employeeId;
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    public String getNote() { return note; }
-    public void setNote(String note) { this.note = note; }
-    public Long getEmployeeId() { return employeeId; }
-    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
 }
