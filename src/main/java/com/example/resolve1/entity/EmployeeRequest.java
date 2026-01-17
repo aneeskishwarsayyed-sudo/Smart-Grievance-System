@@ -14,29 +14,23 @@ public class EmployeeRequest {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String status;
+    private String requestedRole; // EMPLOYEE
+    private String level;         // BEGINNER / MANAGER / SENIOR
+    private String status;        // PENDING / APPROVED / REJECTED
 
-    public Long getId() {
-        return id;
-    }
+    // getters & setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public User getUser() {
-        return user;
-    }
+    public String getRequestedRole() { return requestedRole; }
+    public void setRequestedRole(String requestedRole) { this.requestedRole = requestedRole; }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public String getLevel() { return level; }
+    public void setLevel(String level) { this.level = level; }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

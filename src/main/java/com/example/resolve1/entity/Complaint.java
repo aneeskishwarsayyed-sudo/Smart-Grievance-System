@@ -13,13 +13,21 @@ public class Complaint {
 
     private String title;
     private String description;
-    private String status;   // OPEN, ASSIGNED, RESOLVED
+    private String status;
 
+    // ✅ ADDED FOR EMPLOYEE TASK UPDATES
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
+    // FILE DETAILS
     private String fileName;
     private Long fileSize;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // ✅ REQUIRED FOR ASSIGNMENT & ESCALATION
+    private LocalDateTime assignedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -29,7 +37,8 @@ public class Complaint {
     @JoinColumn(name = "employee_id")
     private User employee;
 
-    // Getters and Setters
+    // ================= GETTERS & SETTERS =================
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -42,6 +51,10 @@ public class Complaint {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
+    // ✅ NEW GETTER AND SETTER FOR NOTES
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
     public String getFileName() { return fileName; }
     public void setFileName(String fileName) { this.fileName = fileName; }
 
@@ -53,6 +66,9 @@ public class Complaint {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public LocalDateTime getAssignedAt() { return assignedAt; }
+    public void setAssignedAt(LocalDateTime assignedAt) { this.assignedAt = assignedAt; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
