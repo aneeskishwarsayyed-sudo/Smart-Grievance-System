@@ -1,0 +1,102 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(120deg, #ff7a18, #32d2aa);
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  width: 380px;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.title {
+  text-align: center;
+  font-size: 26px;
+  color: #ff7a18;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn {
+  background: linear-gradient(120deg, #ff7a18, #ffb347);
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-green {
+  background: linear-gradient(120deg, #32d2aa, #4facfe);
+  color: white;
+}
+
+.btn-red {
+  background: #e74c3c;
+  color: white;
+}
+
+.link {
+  text-align: center;
+  margin-top: 10px;
+  color: #32d2aa;
+  cursor: pointer;
+  font-weight: bold;
+}
+.admin-container {
+  padding: 40px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.complaint-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
