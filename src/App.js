@@ -6,6 +6,7 @@ import UserDashboard from "./pages/UserDashboard";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import AddComplaint from "./pages/AddComplaint";
 import EmployeeRequests from "./pages/EmployeeRequests";
+import AllComplaintsSheet from "./pages/AllComplaintsSheet";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/user" element={<UserDashboard />} />
         <Route path="/employee" element={<EmployeeDashboard />} />
+        <Route path="/admin/complaints-sheet" element={<AllComplaintsSheet />} />
+
       </Routes>
     </BrowserRouter>
   );

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../api/api";
 import { useNavigate } from "react-router-dom";
 import LogoutButton from "../components/LogoutButton";
-import NotificationBell from "../components/NotificationBell"; // ✅ Added
+import NotificationBell from "../components/NotificationBell";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ function AdminDashboard() {
   const [error, setError] = useState("");
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false); // ✅ Added for Details
   const [assignedEmployee, setAssignedEmployee] = useState("");
   const [activeTab, setActiveTab] = useState("pending");
   const [roleRequests, setRoleRequests] = useState([]);
@@ -84,7 +85,6 @@ function AdminDashboard() {
     }
   };
 
-  // ✅ New Escalation Function
   const escalateComplaint = async (complaintId) => {
     try {
       await api.put(`/admin/complaints/${complaintId}/status`, 
@@ -172,7 +172,7 @@ function AdminDashboard() {
           <p style={styles.subtitle}>Manage Complaints & Role Requests</p>
         </div>
         <div style={styles.headerRight}>
-          <NotificationBell /> {/* ✅ Added Bell Icon */}
+          <NotificationBell />
           <LogoutButton />
         </div>
       </div>
@@ -181,6 +181,13 @@ function AdminDashboard() {
         {error && <div style={styles.error}>{error}</div>}
 
         <div style={styles.headerButtons}>
+          <button
+            onClick={() => navigate("/admin/complaints-sheet")}
+            style={{ ...styles.button, backgroundColor: "#4caf50" }}
+          >
+            📊 View Complaints Sheet
+          </button>
+
           <button
             onClick={() => setShowRoleRequests(!showRoleRequests)}
             style={{ ...styles.button, backgroundColor: showRoleRequests ? "#f44336" : "#2196f3" }}
@@ -238,13 +245,16 @@ function AdminDashboard() {
                       <h3>{complaint.title}</h3>
                       <p style={styles.userId}>By: {complaint.user?.name || "Anonymous"}</p>
                     </div>
-                    <span style={{ ...styles.statusBadge, backgroundColor: getStatusColor(complaint.status) }}>
+                    {/* ✅ Clicking the Assigned Badge now shows full details */}
+                    <span 
+                      onClick={() => { setSelectedComplaint(complaint); setShowDetailsModal(true); }}
+                      style={{ ...styles.statusBadge, backgroundColor: getStatusColor(complaint.status), cursor: "pointer" }}
+                    >
                       {complaint.status}
                     </span>
                   </div>
                   <p style={styles.description}>{complaint.description}</p>
                   
-                  {/* ✅ Show Notes from Employee */}
                   {complaint.notes && (
                     <div style={styles.notesBox}>
                       <strong>Update Note:</strong>
@@ -267,7 +277,6 @@ function AdminDashboard() {
                     {(complaint.status === "PENDING" || complaint.status === "OPEN") && (
                       <button onClick={() => { setSelectedComplaint(complaint); setShowAssignModal(true); }} style={{ ...styles.button, ...styles.assignBtn }}>Assign</button>
                     )}
-                    {/* ✅ Added Escalation Button */}
                     {(complaint.status === "ASSIGNED" || complaint.status === "IN_PROGRESS") && (
                       <button onClick={() => escalateComplaint(complaint.id)} style={{ ...styles.button, ...styles.escalateBtn }}>Escalate</button>
                     )}
@@ -280,6 +289,31 @@ function AdminDashboard() {
             </div>
           )}
         </div>
+
+        {/* ✅ Complaint Details Modal */}
+        {showDetailsModal && selectedComplaint && (
+          <div style={styles.modal}>
+            <div style={{...styles.modalContent, maxWidth: "600px"}}>
+              <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px"}}>
+                <h2 style={{margin: 0}}>Full Complaint Details</h2>
+                <span style={{ ...styles.statusBadge, backgroundColor: getStatusColor(selectedComplaint.status) }}>{selectedComplaint.status}</span>
+              </div>
+              <div style={styles.detailBody}>
+                <p><strong>Title:</strong> {selectedComplaint.title}</p>
+                <p><strong>Description:</strong> {selectedComplaint.description}</p>
+                <p><strong>Submitted By:</strong> {selectedComplaint.user?.name || "Anonymous"} ({selectedComplaint.user?.email || "No Email"})</p>
+                <p><strong>Created On:</strong> {new Date(selectedComplaint.createdAt).toLocaleString()}</p>
+                <p><strong>Last Updated:</strong> {new Date(selectedComplaint.updatedAt).toLocaleString()}</p>
+                <hr />
+                <p><strong>Assigned To:</strong> {selectedComplaint.employee?.name || "Not Assigned Yet"}</p>
+                {selectedComplaint.notes && <p><strong>Latest Admin/Employee Note:</strong> {selectedComplaint.notes}</p>}
+              </div>
+              <div style={{...styles.modalActions, marginTop: "20px"}}>
+                <button onClick={() => { setShowDetailsModal(false); setSelectedComplaint(null); }} style={{ ...styles.button, ...styles.cancelBtn, width: "100%" }}>Close Details</button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {showAssignModal && selectedComplaint && (
           <div style={styles.modal}>
@@ -308,7 +342,7 @@ function AdminDashboard() {
 const styles = {
   container: { minHeight: "100vh", backgroundColor: "#f5f5f5" },
   header: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 40px", backgroundColor: "#fff", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", marginBottom: "20px" },
-  headerRight: { display: "flex", alignItems: "center", gap: "25px" }, // Space between Bell and Logout
+  headerRight: { display: "flex", alignItems: "center", gap: "25px" },
   title: { fontSize: "32px", margin: "0", color: "#333" },
   subtitle: { fontSize: "14px", color: "#666", margin: "5px 0 0 0" },
   content: { padding: "0 40px", maxWidth: "1400px", margin: "0 auto" },
@@ -319,7 +353,7 @@ const styles = {
   rejectBtn: { backgroundColor: "#f44336" },
   assignBtn: { backgroundColor: "#2196f3" },
   resolveBtn: { backgroundColor: "#4caf50" },
-  escalateBtn: { backgroundColor: "#ff9800" }, // Orange for escalation
+  escalateBtn: { backgroundColor: "#ff9800" },
   cancelBtn: { backgroundColor: "#9e9e9e" },
   section: { backgroundColor: "white", padding: "20px", borderRadius: "8px", marginBottom: "20px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" },
   requestsGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "15px", marginTop: "15px" },
@@ -346,6 +380,7 @@ const styles = {
   label: { display: "block", marginBottom: "8px", fontWeight: "500", color: "#333" },
   select: { width: "100%", padding: "10px", marginBottom: "20px", border: "1px solid #ddd", borderRadius: "4px", fontSize: "14px", boxSizing: "border-box" },
   modalActions: { display: "flex", gap: "10px" },
+  detailBody: { fontSize: "15px", lineHeight: "1.6", color: "#333" }, // New Style for details
 };
 
 export default AdminDashboard;
