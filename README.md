@@ -1,70 +1,118 @@
-# Getting Started with Create React App
+# ResolveIT – Smart Grievance Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Overview
 
-## Available Scripts
+**ResolveIT** is a full-stack smart grievance redressal system designed to streamline complaint registration, assignment, and resolution through a structured, role-based workflow.
 
-In the project directory, you can run:
+The system improves transparency and efficiency by enabling users to track grievance status while allowing administrators to manage assignments and escalations effectively.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## System Architecture
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* **Frontend**: React-based user interface developed using JavaScript
+* **Backend**: Spring Boot application with a clean, layered architecture
+* **Communication**: RESTful APIs
+* **Database**: MySQL
+* **Tools**: IntelliJ IDEA (Backend), VS Code (Frontend)
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Key Features
 
-### `npm run build`
+* User registration and authentication
+* Complaint submission and tracking
+* Role-based access (User / Admin / Employee)
+* Complaint assignment and status updates
+* Hierarchical employee handling and escalation support
+* Centralized grievance management dashboard
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Project Structure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+Smart-Grievance-System/
+│
+├── backend/                # Spring Boot backend
+│   ├── src/main/java/      # Controllers, Services, Repositories
+│   └── src/main/resources/ # application.properties
+│
+├── src/                    # React frontend source code
+│   ├── pages/
+│   ├── services/
+│   ├── App.js
+│   └── index.js
+│
+├── README.md
+├── package.json
+└── pom.xml / gradle files
+```
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## How to Run the Project
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Backend (Spring Boot)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. Open the backend folder in **IntelliJ IDEA**
+2. Configure MySQL database in `application.properties`
+3. Run the Spring Boot application
+4. Backend runs on:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+http://localhost:8080
+```
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Frontend (React)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Navigate to the project root
+2. Install dependencies:
 
-### Code Splitting
+```bash
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. Start the frontend:
 
-### Analyzing the Bundle Size
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+4. Frontend runs on:
 
-### Making a Progressive Web App
+```
+http://localhost:3000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## Database
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+* MySQL is used for persistent storage
+* Tables include users, employees, complaints, and related mappings
+* Database schema is documented in `BACKEND_IMPLEMENTATION.md`
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Documentation
 
-### `npm run build` fails to minify
+* `BACKEND_IMPLEMENTATION.md` – Backend design and database schema
+* `SYSTEM_ARCHITECTURE.md` – Overall system architecture
+* `SETUP_GUIDE.md` – Setup instructions
+* `IMPLEMENTATION_SUMMARY.md` – Development summary
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## Author
+
+**Sayyed Anees Kishwar**
+GitHub: [https://github.com/aneeskishwarsayyed-sudo](https://github.com/aneeskishwarsayyed-sudo)
+
+---
+
+## Notes
+
+This project was developed as part of the **Infosys Springboard Virtual Internship 6.0**, focusing on real-world backend development, system design, and full-stack integration.
