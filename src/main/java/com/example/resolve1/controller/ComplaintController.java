@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/complaints")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ComplaintController {
 
     @Autowired
